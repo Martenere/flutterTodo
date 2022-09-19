@@ -39,12 +39,7 @@ class toDoList extends StatefulWidget {
 }
 
 class _toDoListState extends State<toDoList> {
-  final _biggerFont = const TextStyle(fontSize: 33.0);
 
-  final _biggerFontComplete = const TextStyle(
-      fontSize: 33.0,
-      color: Colors.green,
-      decoration: TextDecoration.lineThrough);
 
   List<Todo> todos = <Todo>[Todo("addMyFirst", false), Todo("addMySec", true)];
   bool? _filter;
@@ -151,9 +146,16 @@ class TodoItemListTile extends StatelessWidget {
       required this.todo,
       required this.onTodoChanged,
       required this.onTodoRemove});
-  final Todo todo;
-  final Function onTodoChanged;
-  final Function onTodoRemove;
+
+      final _biggerFont = const TextStyle(fontSize: 24.0);
+      final _biggerFontComplete = const TextStyle(
+      fontSize: 24.0,
+      color: Colors.grey,
+      decoration: TextDecoration.lineThrough);
+          
+      final Todo todo;
+      final Function onTodoChanged;
+      final Function onTodoRemove;
 
   @override
   Widget build(BuildContext context) {
@@ -161,7 +163,7 @@ class TodoItemListTile extends StatelessWidget {
       leading: todo.isDone
           ? const Icon(Icons.check_box)
           : const Icon(Icons.check_box_outline_blank),
-      title: Text(todo.name),
+      title: Text(todo.name, style:todo.isDone? _biggerFontComplete: _biggerFont ,),
       trailing: IconButton(
         icon: const Icon(Icons.delete),
         onPressed: () {
