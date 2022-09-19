@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class AddItemCol extends StatelessWidget {
+class AddItemPage extends StatelessWidget {
   final Function addActivity;
   String activity = "";
 
   final _biggerFont = const TextStyle(fontSize: 18.0);
-  AddItemCol({super.key, required this.addActivity});
+  AddItemPage({super.key, required this.addActivity});
 
   @override
   Widget build(BuildContext context) {
@@ -17,8 +17,8 @@ class AddItemCol extends StatelessWidget {
             onChanged: (String value) {
               activity = value;
             },
-            onSubmitted: (String Value) async {
-              activity = Value;
+            onSubmitted: (String value) async {
+              activity = value;
               addActivity(activity);
               Navigator.pop(context);
             },

@@ -20,7 +20,7 @@ class serverTodo {
     var url = Uri.https('todoapp-api.apps.k8s.gu.se', 'register');
     Response response = await get(url);
     key = response.body;
-    print(key);
+    print("Recieved the key from server: $key");
   }
 
   void convertJsonToList(String jsonString) {
@@ -53,6 +53,7 @@ class serverTodo {
       headers: {"Content-Type": "application/json"},
     );
     var jsonBody = response.body;
+    print("Recived json from server: $jsonBody");
     convertJsonToList(jsonBody);
   }
 

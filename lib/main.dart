@@ -93,7 +93,7 @@ class _toDoListState extends State<toDoList> {
     setState(() {
       server = serverTodo();
       server.createKey();
-      todos = server.returnTodos();
+      //todos = server.returnTodos();
     });
   }
 
@@ -101,7 +101,7 @@ class _toDoListState extends State<toDoList> {
     Navigator.of(context).push(MaterialPageRoute<void>(builder: (context) {
       return Scaffold(
           appBar: AppBar(title: const Text('add item')),
-          body: AddItemCol(addActivity: pushToServer));
+          body: AddItemPage(addActivity: pushToServer));
     }));
   }
 
