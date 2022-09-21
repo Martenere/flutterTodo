@@ -7,39 +7,35 @@ void main() {
 }
 
 class serverTodo {
-  List<Todo> todos = <Todo>[Todo("1234", false)];
   String key = "";
 
   serverTodo();
 
-  List<Todo> returnTodos() {
-    return todos;
-  }
-
-  Future<void> createNewKey() async {
+  void createNewKey() async {
     var url = Uri.https('todoapp-api.apps.k8s.gu.se', 'register');
     Response response = await get(url);
     key = response.body;
     print(key);
   }
 
-  void convertJsonToList(String jsonString) {
-    List newTodos = jsonDecode(jsonString);
-    List<Todo> newTodosDecoded = <Todo>[];
-    print(newTodos);
+  List<Todo> convertJsonToTodoList(String jsonString) {
+    List jsonList = jsonDecode(jsonString);
+    List<Todo> todosDecoded = <Todo>[];
+    print(jsonList);
 
-    for (var todoNew in newTodos) {
-      newTodosDecoded.add(Todo(
-        todoNew['title'],
-        todoNew['done'],
-        todoNew["id"],
+    for (var todo in jsonList) {
+      todosDecoded.add(Todo(
+        todo['title'],
+        todo['done'],
+        todo["id"],
       ));
 
       ;
     }
+    return todosDecoded;
   }
 
-  void uploadTodo(String title) async {
+  Future<List<Todo>> uploadTodo(String title) async {
     var url = Uri.https('todoapp-api.apps.k8s.gu.se', 'todos', {'key': key});
     Map<String, dynamic> bodyPayload = {"title": title, "done": false};
 
@@ -49,13 +45,14 @@ class serverTodo {
       headers: {"Content-Type": "application/json"},
     );
     var jsonBody = response.body;
-    convertJsonToList(jsonBody);
+    var decodedTodos = convertJsonToTodoList(jsonBody);
+    return decodedTodos;
   }
 
-  void retrieveTodos() async {
+  Future<List<Todo>> retrieveTodos() async {
     var url = Uri.https('todoapp-api.apps.k8s.gu.se', 'todos', {'key': key});
     Response response = await get(url);
-    convertJsonToList(response.body);
+    return convertJsonToTodoList(response.body);
   }
 
   void updateTodo(Todo todo, bool newCheckValue, [String newName = ""]) async {
