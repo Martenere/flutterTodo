@@ -16,34 +16,30 @@ class serverTodo {
     return todos;
   }
 
-  Future<void> createKey() async {
+  Future<void> createNewKey() async {
     var url = Uri.https('todoapp-api.apps.k8s.gu.se', 'register');
     Response response = await get(url);
     key = response.body;
-    print("Recieved the key from server: $key");
+    print(key);
   }
 
   void convertJsonToList(String jsonString) {
-    List<String> ids = [];
     List newTodos = jsonDecode(jsonString);
-    for (var todo in todos) {
-      ids.add(todo.id);
-    }
+    List<Todo> newTodosDecoded = <Todo>[];
+    print(newTodos);
 
     for (var todoNew in newTodos) {
-      if (!ids.contains(todoNew["id"])) {
-        todos.add(Todo(
-          todoNew['title'],
-          todoNew['done'],
-          todoNew["id"],
-        ));
+      newTodosDecoded.add(Todo(
+        todoNew['title'],
+        todoNew['done'],
+        todoNew["id"],
+      ));
 
-        ;
-      }
+      ;
     }
   }
 
-  void createTodo(String title) async {
+  void uploadTodo(String title) async {
     var url = Uri.https('todoapp-api.apps.k8s.gu.se', 'todos', {'key': key});
     Map<String, dynamic> bodyPayload = {"title": title, "done": false};
 
@@ -53,13 +49,35 @@ class serverTodo {
       headers: {"Content-Type": "application/json"},
     );
     var jsonBody = response.body;
-    print("Recived json from server: $jsonBody");
     convertJsonToList(jsonBody);
   }
 
   void retrieveTodos() async {
-    var url = Uri.parse('https://todoapp-api.apps.k8s.gu.se/register');
+    var url = Uri.https('todoapp-api.apps.k8s.gu.se', 'todos', {'key': key});
     Response response = await get(url);
+    convertJsonToList(response.body);
+  }
+
+  void updateTodo(Todo todo, bool newCheckValue, [String newName = ""]) async {
+    String id = todo.id;
+    String title = (newName != "") ? newName : todo.name;
+
+    Map<String, dynamic> bodyPayload = {"title": title, "done": newCheckValue};
+
+    var url =
+        Uri.https('todoapp-api.apps.k8s.gu.se', 'todos:$id', {'key': key});
+
+    Response response = await put(
+      url,
+      body: jsonEncode(bodyPayload),
+      headers: {"Content-Type": "application/json"},
+    );
+  }
+
+  void removeTodo(String id) {
+    var url =
+        Uri.https('todoapp-api.apps.k8s.gu.se', 'todos:$id', {'key': key});
+    delete(url);
   }
 
   //return response.body;
