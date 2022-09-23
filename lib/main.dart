@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:lab1/providers/todos_provider.dart';
 import 'dart:io';
 import 'serverHandle.dart';
 import 'package:provider/provider.dart';
@@ -16,7 +17,7 @@ class Todo {
 }
 
 void main() {
-  runApp(const MyApp());
+  runApp(ChangeNotifierProvider(create: (_) => Todos(), child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -39,8 +40,6 @@ class toDoList extends StatefulWidget {
 }
 
 class _toDoListState extends State<toDoList> {
-
-
   List<Todo> todos = <Todo>[Todo("addMyFirst", false), Todo("addMySec", true)];
   bool? _filter;
   late Future<String> id;
@@ -87,7 +86,7 @@ class _toDoListState extends State<toDoList> {
     super.initState();
     setState(() {
       server = serverTodo();
-      server.createKey();
+      server.createNewKey();
       //todos = server.returnTodos();
     });
   }
@@ -147,15 +146,15 @@ class TodoItemListTile extends StatelessWidget {
       required this.onTodoChanged,
       required this.onTodoRemove});
 
-      final _biggerFont = const TextStyle(fontSize: 24.0);
-      final _biggerFontComplete = const TextStyle(
+  final _biggerFont = const TextStyle(fontSize: 24.0);
+  final _biggerFontComplete = const TextStyle(
       fontSize: 24.0,
       color: Colors.grey,
       decoration: TextDecoration.lineThrough);
-          
-      final Todo todo;
-      final Function onTodoChanged;
-      final Function onTodoRemove;
+
+  final Todo todo;
+  final Function onTodoChanged;
+  final Function onTodoRemove;
 
   @override
   Widget build(BuildContext context) {
@@ -163,7 +162,10 @@ class TodoItemListTile extends StatelessWidget {
       leading: todo.isDone
           ? const Icon(Icons.check_box)
           : const Icon(Icons.check_box_outline_blank),
-      title: Text(todo.name, style:todo.isDone? _biggerFontComplete: _biggerFont ,),
+      title: Text(
+        todo.name,
+        style: todo.isDone ? _biggerFontComplete : _biggerFont,
+      ),
       trailing: IconButton(
         icon: const Icon(Icons.delete),
         onPressed: () {
