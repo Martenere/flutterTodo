@@ -1,12 +1,9 @@
-import 'dart:ffi';
+
 
 import 'package:http/http.dart';
 import 'dart:convert';
 import 'main.dart';
 
-void main() {
-  print("hey");
-}
 
 class serverTodo {
   String key = "";
@@ -23,7 +20,6 @@ class serverTodo {
   List<Todo> convertJsonToTodoList(String jsonString) {
     List jsonList = jsonDecode(jsonString);
     List<Todo> todosDecoded = <Todo>[];
-    print("func convert jsontotodolist: Decoded $jsonList");
 
     for (var todo in jsonList) {
       todosDecoded.add(Todo(
@@ -71,7 +67,6 @@ class serverTodo {
       body: jsonEncode(bodyPayload),
       headers: {"Content-Type": "application/json"},
     );
-    print("func updateTodo: updated: ${response.body}");
     return convertJsonToTodoList(response.body);
   }
 
@@ -79,7 +74,6 @@ class serverTodo {
     var url =
         Uri.https('todoapp-api.apps.k8s.gu.se', 'todos/$id', {'key': key});
     Response response = await delete(url);
-    print("func removeTodo: deleted: ${response.body}");
     return convertJsonToTodoList(response.body);
 
     //return convertJsonToTodoList(response.body);
