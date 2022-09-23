@@ -17,7 +17,8 @@ class Todo {
 }
 
 void main() {
-  runApp(ChangeNotifierProvider(create: (_) => Todos(), child: const MyApp()));
+  
+  runApp(ChangeNotifierProvider(create: (_) => TodosProvider(), child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -40,31 +41,33 @@ class toDoList extends StatefulWidget {
 }
 
 class _toDoListState extends State<toDoList> {
-  List<Todo> todos = <Todo>[Todo("addMyFirst", false), Todo("addMySec", true)];
+  //List<Todo> todos = <Todo>[Todo("addMyFirst", false), Todo("addMySec", true)];
   bool? _filter;
   late Future<String> id;
-  late final server;
+  late final serverTodo server;
 
   void removeItem(Todo todo) {
-    setState(() {
-      todos.remove(todo);
-    });
+    print("Tried to remove ${todo.id}");
+    var response = server.removeTodo(todo.id);
+    
+    Provider.of<TodosProvider>(context, listen: false).refreshTodos(response);
   }
 
   void addItem(String name) {
     setState(() {
-      todos.add(Todo(name, false));
+      //todos.add(Todo(name, false));
     });
   }
 
   void pushToServer(String name) {
-    server.createTodo(name);
+    var receivedTodos = server.uploadTodo(name);
+    Provider.of<TodosProvider>(context, listen: false).refreshTodos(receivedTodos);
   }
 
   void _checkTodo(Todo todo) {
-    setState(() {
-      todo.isDone = !todo.isDone;
-    });
+    var newCheckValue = !todo.isDone;
+    var response = server.updateTodo(todo, newCheckValue);
+    Provider.of<TodosProvider>(context, listen: false).refreshTodos(response);
   }
 
   void filterPage(int selFilter) {
@@ -101,6 +104,8 @@ class _toDoListState extends State<toDoList> {
 
   @override
   Widget build(BuildContext context) {
+    var todos = Provider.of<TodosProvider>(context).todos;
+
     return Scaffold(
         appBar: AppBar(
           title: const Text('Welcome to Flutter'),

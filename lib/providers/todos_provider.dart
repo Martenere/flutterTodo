@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:lab1/main.dart';
 
-class Todos with ChangeNotifier {
+class TodosProvider with ChangeNotifier {
   List<Todo> _todos = <Todo>[
     Todo("This data is provided from provider", false),
     Todo("addMySec", true)
@@ -9,8 +9,8 @@ class Todos with ChangeNotifier {
 
   List<Todo> get todos => _todos;
 
-  addTodo(Todo todo) {
-    _todos.add(todo);
+  refreshTodos(Future<List<Todo>> todoList) async {
+    _todos = await todoList;
 
     notifyListeners();
   }

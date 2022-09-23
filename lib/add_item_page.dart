@@ -5,6 +5,7 @@ class AddItemPage extends StatelessWidget {
   String activity = "";
 
   final _biggerFont = const TextStyle(fontSize: 18.0);
+  
   AddItemPage({super.key, required this.addActivity});
 
   @override

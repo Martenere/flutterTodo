@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:http/http.dart';
 import 'dart:convert';
 import 'main.dart';
@@ -21,7 +23,7 @@ class serverTodo {
   List<Todo> convertJsonToTodoList(String jsonString) {
     List jsonList = jsonDecode(jsonString);
     List<Todo> todosDecoded = <Todo>[];
-    print(jsonList);
+    print("func convert jsontotodolist: Decoded $jsonList");
 
     for (var todo in jsonList) {
       todosDecoded.add(Todo(
@@ -55,26 +57,32 @@ class serverTodo {
     return convertJsonToTodoList(response.body);
   }
 
-  void updateTodo(Todo todo, bool newCheckValue, [String newName = ""]) async {
+  Future<List<Todo>>  updateTodo(Todo todo, bool newCheckValue, [String newName = ""]) async {
     String id = todo.id;
     String title = (newName != "") ? newName : todo.name;
 
     Map<String, dynamic> bodyPayload = {"title": title, "done": newCheckValue};
 
     var url =
-        Uri.https('todoapp-api.apps.k8s.gu.se', 'todos:$id', {'key': key});
+        Uri.https('todoapp-api.apps.k8s.gu.se', 'todos/$id', {'key': key});
 
     Response response = await put(
       url,
       body: jsonEncode(bodyPayload),
       headers: {"Content-Type": "application/json"},
     );
+    print("func updateTodo: updated: ${response.body}");
+    return convertJsonToTodoList(response.body);
   }
 
-  void removeTodo(String id) {
+  Future<List<Todo>> removeTodo(String id) async {
     var url =
-        Uri.https('todoapp-api.apps.k8s.gu.se', 'todos:$id', {'key': key});
-    delete(url);
+        Uri.https('todoapp-api.apps.k8s.gu.se', 'todos/$id', {'key': key});
+    Response response = await delete(url);
+    print("func removeTodo: deleted: ${response.body}");
+    return convertJsonToTodoList(response.body);
+
+    //return convertJsonToTodoList(response.body);
   }
 
   //return response.body;
