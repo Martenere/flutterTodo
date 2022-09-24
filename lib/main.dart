@@ -17,8 +17,8 @@ class Todo {
 }
 
 void main() {
-  
-  runApp(ChangeNotifierProvider(create: (_) => TodosProvider(), child: const MyApp()));
+  runApp(ChangeNotifierProvider(
+      create: (_) => TodosProvider(), child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -44,12 +44,12 @@ class _toDoListState extends State<toDoList> {
   //List<Todo> todos = <Todo>[Todo("addMyFirst", false), Todo("addMySec", true)];
   bool? _filter;
   late Future<String> id;
-  late final serverTodo server;
+  final serverTodo server = serverTodo();
 
   void removeItem(Todo todo) {
     print("Tried to remove ${todo.id}");
     var response = server.removeTodo(todo.id);
-    
+
     Provider.of<TodosProvider>(context, listen: false).refreshTodos(response);
   }
 
@@ -61,7 +61,8 @@ class _toDoListState extends State<toDoList> {
 
   void pushToServer(String name) {
     var receivedTodos = server.uploadTodo(name);
-    Provider.of<TodosProvider>(context, listen: false).refreshTodos(receivedTodos);
+    Provider.of<TodosProvider>(context, listen: false)
+        .refreshTodos(receivedTodos);
   }
 
   void _checkTodo(Todo todo) {
@@ -87,11 +88,8 @@ class _toDoListState extends State<toDoList> {
   @override
   void initState() {
     super.initState();
-    setState(() {
-      server = serverTodo();
-      server.createNewKey();
-      //todos = server.returnTodos();
-    });
+
+    server.createNewKey();
   }
 
   void _goToAddItemPage() {
