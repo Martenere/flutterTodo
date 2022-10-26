@@ -3,6 +3,7 @@
 import 'package:http/http.dart';
 import 'dart:convert';
 import 'main.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 class serverTodo {
@@ -10,11 +11,21 @@ class serverTodo {
 
   serverTodo();
 
+
+
   void createNewKey() async {
+  final prefs = await SharedPreferences.getInstance();
+  final storedKey = prefs.getString("todoKey");
+  if (storedKey != null){ key = storedKey;
+  print("key was loaded from shared preferences. Key: $key");} else {
+
     var url = Uri.https('todoapp-api.apps.k8s.gu.se', 'register');
     Response response = await get(url);
+    
     key = response.body;
-    print(key);
+    await prefs.setString("todoKey", key);
+
+    print("The key was generated and stored locally. Key: $key");}
   }
 
   List<Todo> convertJsonToTodoList(String jsonString) {

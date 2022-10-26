@@ -90,6 +90,8 @@ class _toDoListState extends State<toDoList> {
     super.initState();
 
     server.createNewKey();
+    //Provider.of<TodosProvider>(context, listen: false).refreshTodos(server.retrieveTodos());
+
   }
 
   void _goToAddItemPage() {
