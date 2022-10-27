@@ -13,7 +13,7 @@ class serverTodo {
 
 
 
-  void createNewKey() async {
+  Future<void> createNewKey() async {
   final prefs = await SharedPreferences.getInstance();
   final storedKey = prefs.getString("todoKey");
   if (storedKey != null){ key = storedKey;
@@ -59,9 +59,13 @@ class serverTodo {
   }
 
   Future<List<Todo>> retrieveTodos() async {
+    await createNewKey();
+    print("current key is; $key");
     var url = Uri.https('todoapp-api.apps.k8s.gu.se', 'todos', {'key': key});
     Response response = await get(url);
-    return convertJsonToTodoList(response.body);
+    print( "was sent back ${response.body}");
+    var json =convertJsonToTodoList(response.body);
+    return json;
   }
 
   Future<List<Todo>>  updateTodo(Todo todo, bool newCheckValue, [String newName = ""]) async {
